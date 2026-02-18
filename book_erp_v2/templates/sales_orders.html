@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h4 class="fw-bold mb-0">Sales Orders</h4>
+  <span class="text-muted small">Billing role creates + approves</span>
+</div>
+
+{% if so %}
+<div class="card p-4 mb-3">
+  <div class="d-flex justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="fw-bold">{{so.so_no}}</div>
+      <div class="text-muted small">Date: {{so.so_date}} | Status: <span class="badge text-bg-secondary">{{so.status}}</span></div>
+      <div class="small">Party: <b>{{party.name}}</b> | WH: <b>{{wh.name}}</b></div>
+    </div>
+    <div class="d-flex gap-2">
+      {% if so.status == "OPEN" %}
+      <form method="post" action="/sales-orders/{{so.id}}/approve">
+        <button class="btn btn-dark">Approve</button>
+      </form>
+      {% endif %}
+      <a class="btn btn-outline-dark" href="/sales-orders">Back</a>
+    </div>
+  </div>
+</div>
+
+<div class="card p-4 mb-3">
+  <h6 class="fw-bold">Add Line (Price slab auto applied)</h6>
+  <form method="post" action="/sales-orders/{{so.id}}/add-line" class="row g-2">
+    <div class="col-md-8">
+      <select class="form-select" name="item_id">
+        {% for it in items %}
+          <option value="{{it.id}}">{{it.sku}} - {{it.title}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><input class="form-control" name="qty" type="number" placeholder="Qty" required></div>
+    <div class="col-md-2"><button class="btn btn-dark w-100">Add</button></div>
+  </form>
+</div>
+
+<div class="card p-3">
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead class="table-light"><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Disc%</th><th>GST%</th></tr></thead>
+      <tbody>
+        {% for l in lines %}
+        <tr>
+          <td>{{l.item_id}}</td>
+          <td>{{l.qty}}</td>
+          <td>{{l.rate}}</td>
+          <td>{{l.discount_percent}}</td>
+          <td>{{l.gst_percent}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card p-4 mb-3">
+  <h6 class="fw-bold">Create Sales Order</h6>
+  <form method="post" action="/sales-orders/create" class="row g-2">
+    <div class="col-md-5">
+      <label class="form-label small text-muted">Party</label>
+      <select class="form-select" name="party_id">
+        {% for p in parties %}<option value="{{p.id}}">{{p.name}}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small text-muted">Warehouse</label>
+      <select class="form-select" name="warehouse_id">
+        {% for w in whs %}<option value="{{w.id}}">{{w.name}}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted">Date</label>
+      <input class="form-control" name="so_date" type="date">
+    </div>
+    <div class="col-12"><button class="btn btn-dark">Create</button></div>
+  </form>
+</div>
+
+<div class="card p-3">
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead class="table-light"><tr><th>SO</th><th>Date</th><th>Status</th><th>Open</th></tr></thead>
+      <tbody>
+      {% for s in sos %}
+        <tr>
+          <td class="fw-semibold">{{s.so_no}}</td>
+          <td>{{s.so_date}}</td>
+          <td><span class="badge text-bg-secondary">{{s.status}}</span></td>
+          <td><a class="btn btn-sm btn-outline-dark" href="/sales-orders/{{s.id}}">Open</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

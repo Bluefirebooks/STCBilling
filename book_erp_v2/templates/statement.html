@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h4 class="fw-bold mb-0">Party Statements</h4>
+  <span class="text-muted small">Month/Year wise + Invoice + Payments</span>
+</div>
+
+<div class="card p-4 mb-3">
+  <h6 class="fw-bold">Generate Statement</h6>
+  <form method="get" action="/statements/view" class="row g-2">
+    <div class="col-md-6">
+      <label class="form-label small text-muted">Party</label>
+      <select class="form-select" name="party_id">
+        {% for p in parties %}<option value="{{p.id}}">{{p.name}}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted">From</label>
+      <input class="form-control" type="date" name="from_date">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted">To</label>
+      <input class="form-control" type="date" name="to_date">
+    </div>
+    <div class="col-12">
+      <button class="btn btn-dark">View</button>
+    </div>
+  </form>
+</div>
+
+{% if view %}
+<div class="card p-4 mb-3">
+  <div class="d-flex justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="fw-bold">{{ party.name }}</div>
+      <div class="text-muted small">State: {{ party.state }} | Credit Limit: {{ party.credit_limit }}</div>
+      <div class="small">
+        Outstanding: <b>{{ summary.outstanding }}</b>
+        {% if summary.overdue > 0 %}<span class="badge text-bg-danger ms-2">Overdue: {{ summary.overdue }}</span>{% endif %}
+      </div>
+    </div>
+    <a class="btn btn-outline-dark" href="/statements">Back</a>
+  </div>
+</div>
+
+{% for key, bucket in buckets.items() %}
+<div class="card p-3 mb-3">
+  <div class="fw-bold mb-2">{{ key }}</div>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Invoice</th><th>Date</th><th>Total</th><th>Paid</th><th>Balance</th><th>PDF</th></tr>
+      </thead>
+      <tbody>
+      {% for row in bucket %}
+        <tr>
+          <td class="fw-semibold">{{ row.invoice_no }}</td>
+          <td>{{ row.invoice_date }}</td>
+          <td>{{ row.total }}</td>
+          <td>{{ row.paid }}</td>
+          <td>{{ row.balance }}</td>
+          <td><a class="btn btn-sm btn-outline-dark" href="/invoices/{{row.id}}/pdf" target="_blank">PDF</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endfor %}
+
+{% endif %}
+{% endblock %}

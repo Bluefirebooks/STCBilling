@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h4 class="fw-bold mb-0">Dashboard</h4>
+    <div class="text-muted small">SO → Challan → Invoice flow | GST | Statements | Role-based access</div>
+  </div>
+  <span class="badge rounded-pill text-bg-light border">Role: {{ user.role }}</span>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="text-muted">Items</div>
+      <div class="fs-2 fw-bold">{{ items }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="text-muted">Parties</div>
+      <div class="fs-2 fw-bold">{{ parties }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="text-muted">Sales Orders</div>
+      <div class="fs-2 fw-bold">{{ sos }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="text-muted">Invoices</div>
+      <div class="fs-2 fw-bold">{{ invs }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h6 class="fw-bold">Quick Start</h6>
+      <ol class="small text-muted mb-0">
+        <li>Items add karein (SKU/HSN/GST/Price)</li>
+        <li>Party add karein (State = Place of Supply, Credit Limit)</li>
+        <li>Sales Order banayein → Approve</li>
+        <li>Warehouse role se Challan create (stock auto reduce)</li>
+        <li>Invoice create (GST breakup + PDF)</li>
+        <li>Accounts: Payment add + Statement export</li>
+      </ol>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h6 class="fw-bold">Useful Links</h6>
+      <div class="d-grid gap-2">
+        <a class="btn btn-dark" href="/sales-orders">Create Sales Order</a>
+        <a class="btn btn-outline-dark" href="/challans">Dispatch (Challan)</a>
+        <a class="btn btn-outline-dark" href="/invoices">Invoices + PDF</a>
+        <a class="btn btn-outline-dark" href="/statements">Party Statement</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

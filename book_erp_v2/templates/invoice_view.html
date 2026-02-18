@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h4 class="fw-bold mb-0">{{inv.invoice_no}}</h4>
+    <div class="text-muted small">Date: {{inv.invoice_date}} | Place of Supply: {{inv.place_of_supply_state}}</div>
+    <div class="small">Party: <b>{{party.name}}</b> (GSTIN: {{party.gstin}})</div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-dark" href="/invoices/{{inv.id}}/pdf" target="_blank">Download PDF</a>
+    <a class="btn btn-outline-secondary" href="/invoices">Back</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="card p-3">
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead class="table-light"><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Disc%</th><th>GST%</th></tr></thead>
+          <tbody>
+            {% for l in lines %}
+            <tr>
+              <td>{{l.item_id}}</td>
+              <td>{{l.qty}}</td>
+              <td>{{l.rate}}</td>
+              <td>{{l.discount_percent}}</td>
+              <td>{{l.gst_percent}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4">
+      <h6 class="fw-bold">Totals</h6>
+      <div class="d-flex justify-content-between"><span>Subtotal</span><b>{{totals.subtotal}}</b></div>
+      <div class="d-flex justify-content-between"><span>GST</span><b>{{totals.gst}}</b></div>
+      <hr>
+      <div class="d-flex justify-content-between"><span>Total</span><b>{{totals.total}}</b></div>
+      <div class="d-flex justify-content-between"><span>Paid</span><b>{{totals.paid}}</b></div>
+      <div class="d-flex justify-content-between"><span>Balance</span><b>{{totals.balance}}</b></div>
+
+      <hr>
+      <h6 class="fw-bold">Add Payment (Accounts)</h6>
+      <form method="post" action="/payments/add" class="row g-2">
+        <input type="hidden" name="inv_id" value="{{inv.id}}">
+        <div class="col-12"><input class="form-control" name="amount" type="number" step="0.01" placeholder="Amount" required></div>
+        <div class="col-12">
+          <select class="form-select" name="mode">
+            <option>UPI</option><option>NEFT</option><option>CASH</option><option>CHEQUE</option>
+          </select>
+        </div>
+        <div class="col-12"><input class="form-control" name="ref" placeholder="UTR/Ref"></div>
+        <div class="col-12"><button class="btn btn-dark w-100">Save Payment</button></div>
+      </form>
+
+      <hr>
+      <h6 class="fw-bold">Send</h6>
+      <form method="post" action="/invoices/{{inv.id}}/send-email" class="mb-2">
+        <input class="form-control mb-2" name="to_email" placeholder="Email">
+        <button class="btn btn-outline-dark w-100" type="submit">Send Email (PDF)</button>
+      </form>
+      <form method="post" action="/invoices/{{inv.id}}/send-whatsapp">
+        <input class="form-control mb-2" name="to_phone" placeholder="WhatsApp Number (91XXXXXXXXXX)">
+        <button class="btn btn-outline-dark w-100" type="submit">Send WhatsApp</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

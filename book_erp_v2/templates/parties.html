@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h4 class="fw-bold mb-0">Parties</h4>
+  <span class="text-muted small">Credit limit + Place of supply + Price slabs</span>
+</div>
+
+<div class="card p-4 mb-3">
+  <h6 class="fw-bold">Add Party</h6>
+  <form method="post" action="/parties/create" class="row g-2">
+    <div class="col-md-4"><input class="form-control" name="name" placeholder="Party Name" required></div>
+    <div class="col-md-2">
+      <select class="form-select" name="type">
+        <option>Distributor</option><option>School</option><option>Retailer</option>
+      </select>
+    </div>
+    <div class="col-md-2"><input class="form-control" name="phone" placeholder="Phone"></div>
+    <div class="col-md-2"><input class="form-control" name="email" placeholder="Email"></div>
+    <div class="col-md-2"><input class="form-control" name="gstin" placeholder="GSTIN"></div>
+    <div class="col-md-3"><input class="form-control" name="state" placeholder="State (Place of Supply)"></div>
+    <div class="col-md-3"><input class="form-control" name="credit_limit" type="number" step="0.01" placeholder="Credit Limit"></div>
+    <div class="col-md-3"><input class="form-control" name="payment_terms_days" type="number" placeholder="Terms Days"></div>
+    <div class="col-md-6"><input class="form-control" name="billing_address" placeholder="Billing Address"></div>
+    <div class="col-md-6"><input class="form-control" name="shipping_address" placeholder="Shipping Address"></div>
+    <div class="col-12"><button class="btn btn-dark">Save</button></div>
+  </form>
+</div>
+
+<div class="card p-4 mb-3">
+  <h6 class="fw-bold">Party-wise Discount (Item)</h6>
+  <form method="post" action="/parties/price" class="row g-2">
+    <div class="col-md-4">
+      <select class="form-select" name="party_id">
+        {% for p in rows %}<option value="{{p.id}}">{{p.name}}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <select class="form-select" name="item_id">
+        {% for it in items %}<option value="{{it.id}}">{{it.sku}} - {{it.title}}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><input class="form-control" name="discount_percent" type="number" step="0.01" placeholder="Discount %"></div>
+    <div class="col-12"><button class="btn btn-outline-dark">Set Discount</button></div>
+  </form>
+</div>
+
+<div class="card p-3">
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead class="table-light"><tr><th>Name</th><th>Type</th><th>State</th><th>Credit Limit</th><th>Phone</th><th>GSTIN</th></tr></thead>
+      <tbody>
+      {% for p in rows %}
+        <tr>
+          <td class="fw-semibold">{{p.name}}</td>
+          <td>{{p.type}}</td>
+          <td>{{p.state}}</td>
+          <td>{{p.credit_limit}}</td>
+          <td>{{p.phone}}</td>
+          <td>{{p.gstin}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
